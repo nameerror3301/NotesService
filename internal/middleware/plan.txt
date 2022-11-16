@@ -1,0 +1,6 @@
+/*
+	2 - Middleware from check type content (SUCCESS)
+	3 - Middleware from BasicAuth (NOT RELIZE)
+	4 - Middleware from check method (SUCCESS)
+	5 - Middlewate from logging user request (SUCCESS) 
+*/

@@ -1,7 +1,7 @@
 package main
 
 import (
-	run "NotesService/internal/run"
+	run "NotesService/internal/app/run"
 
 	logrus "github.com/sirupsen/logrus"
 )

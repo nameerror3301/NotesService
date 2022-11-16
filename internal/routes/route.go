@@ -4,12 +4,7 @@ import (
 	"net/http"
 )
 
-const (
-	StatusOK   = http.StatusOK
-	BadRequest = http.StatusBadRequest
-	NotFound   = http.StatusNotFound
-)
-
+// STATUS: WORK
 func HomePage(w http.ResponseWriter, r *http.Request) {
 	w.Write([]byte("Start Page!"))
 }
