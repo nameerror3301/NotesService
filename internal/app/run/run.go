@@ -20,7 +20,7 @@ func Run() error {
 	}
 
 	// http.HandleFunc("/api") -> There will be Swagger documentation
-	http.HandleFunc("/api/v1", middle.UserMethodCheck(middle.UserRequestLog(routes.HomePage, "/api/v1"), http.MethodGet))
+	http.HandleFunc("/api/v1", middle.UserMethodCheck(middle.UserRequestLog(routes.HomePage, "/api/v1"), http.MethodGet, http.MethodPost))
 	http.HandleFunc("/api/v1/signIn", middle.UserMethodCheck(middle.UserCheckContent(middle.UserRequestLog(auth.SignIn, "/api/v1/signIn")), http.MethodPost))
 	http.HandleFunc("/api/v1/signUp", middle.UserMethodCheck(middle.UserCheckContent(middle.UserRequestLog(auth.SignUp, "/api/v1/signUp")), http.MethodPost))
 

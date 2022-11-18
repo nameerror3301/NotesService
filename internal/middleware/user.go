@@ -26,7 +26,7 @@ func UserRequestLog(next http.HandlerFunc, path string) http.HandlerFunc {
 	}
 }
 
-// STATUS: NOTWORK
+// STATUS: WORK (tested)
 func UserMethodCheck(next http.HandlerFunc, method ...string) http.HandlerFunc {
 	/*
 		Middleware from check user method
@@ -34,15 +34,33 @@ func UserMethodCheck(next http.HandlerFunc, method ...string) http.HandlerFunc {
 
 	return func(w http.ResponseWriter, r *http.Request) {
 		w.Header().Set("Content-Type", "text/plain")
-
-		// Add logic to work with multiple methods
-		if r.Method != method {
+		if !isMethod(r, method...) {
 			logrus.Warnf("The user uses the wrong method for this endpoint - [%s]", r.Method)
 			http.Error(w, "Incorrect Method", http.StatusMethodNotAllowed)
 			return
 		}
 		next(w, r)
 	}
+}
+
+// STATUS: WORK (tested)
+func isMethod(r *http.Request, method ...string) bool {
+	var status []bool
+	for _, val := range method {
+		if r.Method == val {
+			status = append(status, true)
+		} else {
+			status = append(status, false)
+		}
+	}
+
+	for _, val := range status {
+		if val {
+			return true
+		}
+	}
+
+	return false
 }
 
 // STATUS: WORK (Tested)

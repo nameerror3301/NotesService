@@ -20,3 +20,7 @@ func main() {
 		logrus.Fatalf("Err server up - %s", err)
 	}
 }
+
+func adwawd(a int, b int) int {
+	return a + b
+}
