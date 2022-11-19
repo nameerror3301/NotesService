@@ -1,49 +1,55 @@
 package middleware
 
 import (
+	"NotesService/internal/models"
+	"NotesService/internal/routes"
+	"encoding/json"
 	"net/http"
 
 	"github.com/sirupsen/logrus"
 )
 
 // STATUS: WORK (Tested)
-func UserRequestLog(next http.HandlerFunc, path string) http.HandlerFunc {
+func UserSetContentType(next http.HandlerFunc) http.HandlerFunc {
+	/*
+		Set content type from responce
+	*/
+	return func(w http.ResponseWriter, r *http.Request) {
+		w.Header().Set("Content-Type", "application/json")
+		next(w, r)
+	}
+}
+
+// STATUS: WORK (Tested)
+func UserRequestLog(next http.HandlerFunc) http.HandlerFunc {
 	/*
 		Middleware from logging user request
 	*/
-
 	return func(w http.ResponseWriter, r *http.Request) {
-		w.Header().Set("Content-Type", "text/plain")
-
-		if r.URL.Path != path {
-			logrus.Warnf("User requested a page that does not exist - [%s]", r.URL.Path)
-			http.Error(w, "Sorry, the page you requested does not exist", http.StatusNotFound)
-			return
-		}
-
 		logrus.Infof("Path - [%s] - Method - [%s] Body - %v", r.URL.Path, r.Method, r.Body)
 		next(w, r)
 	}
 }
 
-// STATUS: WORK (tested)
+// STATUS: WORK (Tested)
 func UserMethodCheck(next http.HandlerFunc, method ...string) http.HandlerFunc {
 	/*
 		Middleware from check user method
 	*/
 
 	return func(w http.ResponseWriter, r *http.Request) {
-		w.Header().Set("Content-Type", "text/plain")
 		if !isMethod(r, method...) {
 			logrus.Warnf("The user uses the wrong method for this endpoint - [%s]", r.Method)
-			http.Error(w, "Incorrect Method", http.StatusMethodNotAllowed)
+
+			w.WriteHeader(http.StatusMethodNotAllowed)
+			json.NewEncoder(w).Encode(routes.RespStatus(1.0, http.StatusMethodNotAllowed, "Incorrect Method"))
 			return
 		}
 		next(w, r)
 	}
 }
 
-// STATUS: WORK (tested)
+// STATUS: WORK (Tested)
 func isMethod(r *http.Request, method ...string) bool {
 	var status []bool
 	for _, val := range method {
@@ -70,13 +76,31 @@ func UserCheckContent(next http.HandlerFunc) http.HandlerFunc {
 	*/
 
 	return func(w http.ResponseWriter, r *http.Request) {
-		w.Header().Set("Content-Type", "text/plain")
-
 		if r.Header.Get("Content-Type") != "application/json" {
 			logrus.Warnf("User sent an invalid data type - [%s]", r.Header.Get("Content-Type"))
-			http.Error(w, "Incorrect Content-Type", http.StatusBadRequest)
+
+			w.WriteHeader(http.StatusBadRequest)
+			json.NewEncoder(w).Encode(routes.RespStatus(1.0, http.StatusBadRequest, "Incorrect Content-Type"))
 			return
 		}
 		next(w, r)
+	}
+}
+
+func UserBasicAuth(next http.HandlerFunc) http.HandlerFunc {
+	/*
+		Middleware from auth user
+	*/
+
+	return func(w http.ResponseWriter, r *http.Request) {
+		email, pass, ok := r.BasicAuth()
+		if ok && !models.IsUserData(email, pass) {
+			w.Header().Set("WWW-Authenticate", `Basic realm="api"`)
+			w.WriteHeader(http.StatusUnauthorized)
+			json.NewEncoder(w).Encode(routes.RespStatus(1.0, http.StatusUnauthorized, "Bad auth"))
+			return
+		} else {
+			next(w, r)
+		}
 	}
 }
