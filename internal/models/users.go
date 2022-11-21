@@ -13,6 +13,7 @@ type UserData struct {
 
 var userData = map[string][]byte{}
 
+// Checking for a user in the database
 func IsUserData(email string, pass string) bool {
 	hashPass, isOk := userData[email]
 	if !isOk {
@@ -25,8 +26,8 @@ func IsUserData(email string, pass string) bool {
 	return true
 }
 
+// Creating a user
 func CreateUser(email string, pass string) (bool, error) {
-
 	for key, _ := range userData {
 		if key == email {
 			return false, nil
@@ -38,8 +39,6 @@ func CreateUser(email string, pass string) (bool, error) {
 	} else {
 		userData[email] = hashPass
 	}
-
-	logrus.Infof("Userdata - %s", userData[email])
 
 	return true, nil
 }

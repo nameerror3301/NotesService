@@ -10,17 +10,6 @@ import (
 )
 
 // STATUS: WORK (Tested)
-func UserSetContentType(next http.HandlerFunc) http.HandlerFunc {
-	/*
-		Set content type from responce
-	*/
-	return func(w http.ResponseWriter, r *http.Request) {
-		w.Header().Set("Content-Type", "application/json")
-		next(w, r)
-	}
-}
-
-// STATUS: WORK (Tested)
 func UserRequestLog(next http.HandlerFunc) http.HandlerFunc {
 	/*
 		Middleware from logging user request
@@ -41,8 +30,7 @@ func UserMethodCheck(next http.HandlerFunc, method ...string) http.HandlerFunc {
 		if !isMethod(r, method...) {
 			logrus.Warnf("The user uses the wrong method for this endpoint - [%s]", r.Method)
 
-			w.WriteHeader(http.StatusMethodNotAllowed)
-			json.NewEncoder(w).Encode(routes.RespStatus(1.0, http.StatusMethodNotAllowed, "Incorrect Method"))
+			json.NewEncoder(w).Encode(routes.RespStatus(w, 1.0, http.StatusMethodNotAllowed, "Incorrect Method"))
 			return
 		}
 		next(w, r)
@@ -80,7 +68,7 @@ func UserCheckContent(next http.HandlerFunc) http.HandlerFunc {
 			logrus.Warnf("User sent an invalid data type - [%s]", r.Header.Get("Content-Type"))
 
 			w.WriteHeader(http.StatusBadRequest)
-			json.NewEncoder(w).Encode(routes.RespStatus(1.0, http.StatusBadRequest, "Incorrect Content-Type"))
+			json.NewEncoder(w).Encode(routes.RespStatus(w, 1.0, http.StatusBadRequest, "Incorrect Content-Type"))
 			return
 		}
 		next(w, r)
@@ -94,13 +82,12 @@ func UserBasicAuth(next http.HandlerFunc) http.HandlerFunc {
 
 	return func(w http.ResponseWriter, r *http.Request) {
 		email, pass, ok := r.BasicAuth()
-		if ok && !models.IsUserData(email, pass) {
-			w.Header().Set("WWW-Authenticate", `Basic realm="api"`)
-			w.WriteHeader(http.StatusUnauthorized)
-			json.NewEncoder(w).Encode(routes.RespStatus(1.0, http.StatusUnauthorized, "Bad auth"))
-			return
-		} else {
+		if ok && models.IsUserData(email, pass) {
 			next(w, r)
+		} else {
+			w.Header().Set("WWW-Authenticate", `Basic realm="api"`)
+			json.NewEncoder(w).Encode(routes.RespStatus(w, 1.0, http.StatusUnauthorized, "Bad auth"))
+			return
 		}
 	}
 }
