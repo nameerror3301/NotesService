@@ -15,7 +15,7 @@ func UserRequestLog(next http.HandlerFunc) http.HandlerFunc {
 		Middleware from logging user request
 	*/
 	return func(w http.ResponseWriter, r *http.Request) {
-		logrus.Infof("Path - [%s] - Method - [%s] Body - %v", r.URL.Path, r.Method, r.Body)
+		logrus.Infof("Path - [%s] - Method - [%s]", r.URL.Path, r.Method)
 		next(w, r)
 	}
 }
@@ -75,6 +75,7 @@ func UserCheckContent(next http.HandlerFunc) http.HandlerFunc {
 	}
 }
 
+// STATUS: WORK (Tested)
 func UserBasicAuth(next http.HandlerFunc) http.HandlerFunc {
 	/*
 		Middleware from auth user

@@ -11,6 +11,8 @@ type NotesData struct {
 	Id    int    `json:"id"`
 	Name  string `json:"notes_name"`
 	Value string `json:"notes_content"`
+	// TTL
+	// Date create
 }
 
 var notes []NotesData
@@ -21,7 +23,6 @@ var notes []NotesData
 */
 
 func FindAll(email string) []NotesData {
-
 	var data []NotesData
 
 	for _, val := range notes {
@@ -29,13 +30,13 @@ func FindAll(email string) []NotesData {
 			data = append(data, NotesData{
 				Email: val.Email,
 				Id:    val.Id,
-				Name:  val.Value,
+				Name:  val.Name,
 				Value: val.Value,
 			})
 		}
 	}
 
-	// Проверка на наличие у пользователя заметок
+	// Checking for user notes
 	if data == nil {
 		return nil
 	}
@@ -52,9 +53,15 @@ func CreateNote(email string, name string, value string) {
 		Value: value,
 	})
 
-	logrus.Infof("User - %s --> Create Notes", email)
+	logrus.Infof("%s --> Create Notes", email)
 }
 
-// Upload data in notes
+// Upload data in notes (PUT)
+func UploadNote(id int, email string, newname string, newvalue string) {
 
-// Delite notes
+}
+
+// Delite notes (DELITE)
+func DeliteNote(id int, email string) {
+
+}
