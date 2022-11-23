@@ -57,11 +57,13 @@ func CreateNote(email string, name string, value string) {
 }
 
 // Upload data in notes (PUT)
-func UploadNote(id int, email string, newname string, newvalue string) {
+func UploadNote(email string, id int, newname string, newvalue string) {
 
 }
 
 // Delite notes (DELITE)
-func DeliteNote(id int, email string) {
-
+func DeliteNote(email string, id int) {
+	/*
+		Удаление будет реализованно средствами среза слайса структур
+	*/
 }
