@@ -1,8 +1,6 @@
 package models
 
 import (
-	"math/rand"
-
 	"github.com/sirupsen/logrus"
 )
 
@@ -16,6 +14,16 @@ type NotesData struct {
 }
 
 var notes []NotesData
+
+func Numbering(data []NotesData) int {
+	if data == nil {
+		return 1
+	}
+
+	num := data[len(data)-1]
+
+	return num.Id + 1
+}
 
 /*
 	Getting all notes from a particular user (The list of notes is determined by email)
@@ -46,13 +54,14 @@ func FindAll(email string) []NotesData {
 
 // Creating a note
 func CreateNote(email string, name string, value string) {
+	num := Numbering(notes)
+
 	notes = append(notes, NotesData{
 		Email: email,
-		Id:    rand.Intn(10000),
+		Id:    num,
 		Name:  name,
 		Value: value,
 	})
-
 	logrus.Infof("%s --> Create Notes", email)
 }
 
