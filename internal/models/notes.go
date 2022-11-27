@@ -1,6 +1,8 @@
 package models
 
 import (
+	"time"
+
 	"github.com/sirupsen/logrus"
 )
 
@@ -10,7 +12,7 @@ type NotesData struct {
 	Name  string `json:"notes_name"`
 	Value string `json:"notes_content"`
 	// TTL
-	// Date create
+	Date time.Time `json:"last_update"`
 }
 
 var notes []NotesData
@@ -29,7 +31,7 @@ func numbering(data []NotesData) int {
 	Getting all notes from a particular user (The list of notes is determined by email)
 	Email is not visible to the user when all notes are received
 */
-
+// Find all WORK: TESTED
 func FindAll(email string) []NotesData {
 	var data []NotesData
 
@@ -40,6 +42,7 @@ func FindAll(email string) []NotesData {
 				Id:    val.Id,
 				Name:  val.Name,
 				Value: val.Value,
+				Date:  val.Date,
 			})
 		}
 	}
@@ -52,18 +55,38 @@ func FindAll(email string) []NotesData {
 	return data
 }
 
-// Creating a note
-func CreateNote(email string, name string, value string) {
+func FindById(email string, id int) []NotesData {
+	var data []NotesData
+	for _, val := range notes {
+		if val.Email == email {
+			if val.Id == id {
+				data = append(data, NotesData{
+					Email: val.Email,
+					Id:    val.Id,
+					Name:  val.Name,
+					Value: val.Value,
+					Date:  val.Date,
+				})
+				return data
+			}
+		}
+	}
+	return nil
+}
 
+// Creating a note WORK: TESTED
+func CreateNote(email string, name string, value string) {
 	notes = append(notes, NotesData{
 		Email: email,
 		Id:    numbering(notes),
 		Name:  name,
 		Value: value,
+		Date:  time.Now(),
 	})
 	logrus.Infof("%s --> Create Notes", email)
 }
 
+// Upload notes WORK: TESTED
 func UploadNote(email string, id int, newname string, newvalue string) bool {
 	for idx, val := range notes {
 		if val.Email == email {
@@ -77,9 +100,22 @@ func UploadNote(email string, id int, newname string, newvalue string) bool {
 	return false
 }
 
-// Delite notes (DELITE)
-func DeliteNote(email string, id int) {
-	/*
-		Удаление будет реализованно средствами среза слайса структур
-	*/
+// Delete notes
+func DeliteNote(email string, id int) bool {
+	status := false
+
+	for idx, val := range notes {
+		if val.Email == email {
+			if val.Id == id {
+				notes = append(notes[:idx], notes[idx+1:]...)
+				status = true
+			}
+		}
+	}
+
+	for idx, _ := range notes {
+		notes[idx].Id = idx + 1
+	}
+
+	return status
 }
