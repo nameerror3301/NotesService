@@ -21,7 +21,7 @@ func beforeCreate(r *http.Request) (string, string) {
 func SignUp(w http.ResponseWriter, r *http.Request) {
 	email, pass := beforeCreate(r)
 	if email == "" || pass == "" {
-		json.NewEncoder(w).Encode(routes.RespStatus(w, 1.0, http.StatusBadRequest, "Incorrect data - check email or password"))
+		json.NewEncoder(w).Encode(routes.RespStatus(w, 1.0, http.StatusBadRequest, "Incorrect data check email or password"))
 		return
 	}
 

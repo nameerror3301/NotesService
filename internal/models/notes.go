@@ -55,6 +55,7 @@ func FindAll(email string) []NotesData {
 	return data
 }
 
+// Find by id WORK: TESTED
 func FindById(email string, id int) []NotesData {
 	var data []NotesData
 	for _, val := range notes {
@@ -100,7 +101,7 @@ func UploadNote(email string, id int, newname string, newvalue string) bool {
 	return false
 }
 
-// Delete notes
+// Delete notes WORK: TESTED
 func DeliteNote(email string, id int) bool {
 	status := false
 
@@ -113,9 +114,8 @@ func DeliteNote(email string, id int) bool {
 		}
 	}
 
-	for idx, _ := range notes {
+	for idx := range notes {
 		notes[idx].Id = idx + 1
 	}
-
 	return status
 }
