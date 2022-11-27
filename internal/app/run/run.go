@@ -25,6 +25,7 @@ func Run() error {
 	http.HandleFunc("/api/v1/signUp", middle.UserMethodCheck(middle.UserCheckContent(auth.SignUp), http.MethodPost))
 	http.HandleFunc("/api/v1/notes", middle.UserMethodCheck(middle.UserBasicAuth(middle.UserRequestLog(notes.FindAllNotes)), http.MethodGet))
 	http.HandleFunc("/api/v1/notes/create", middle.UserMethodCheck(middle.UserBasicAuth(middle.UserRequestLog(notes.CreateNote)), http.MethodPost))
+	http.HandleFunc("/api/v1/notes/upload", middle.UserMethodCheck(middle.UserBasicAuth(middle.UserRequestLog(notes.UploadNote)), http.MethodPut))
 
 	if err := serv.ListenAndServe(); err != nil {
 		return err

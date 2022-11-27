@@ -15,7 +15,7 @@ type NotesData struct {
 
 var notes []NotesData
 
-func Numbering(data []NotesData) int {
+func numbering(data []NotesData) int {
 	if data == nil {
 		return 1
 	}
@@ -54,20 +54,27 @@ func FindAll(email string) []NotesData {
 
 // Creating a note
 func CreateNote(email string, name string, value string) {
-	num := Numbering(notes)
 
 	notes = append(notes, NotesData{
 		Email: email,
-		Id:    num,
+		Id:    numbering(notes),
 		Name:  name,
 		Value: value,
 	})
 	logrus.Infof("%s --> Create Notes", email)
 }
 
-// Upload data in notes (PUT)
-func UploadNote(email string, id int, newname string, newvalue string) {
-
+func UploadNote(email string, id int, newname string, newvalue string) bool {
+	for idx, val := range notes {
+		if val.Email == email {
+			if val.Id == id {
+				notes[idx].Name = newname
+				notes[idx].Value = newvalue
+				return true
+			}
+		}
+	}
+	return false
 }
 
 // Delite notes (DELITE)
