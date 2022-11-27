@@ -10,4 +10,4 @@ RUN go mod tidy && \
 FROM alpine:3.10
 COPY --from=builder /notes-service /bin
 
-ENTRYPOINT ["backend-service"]
+ENTRYPOINT ["notes-service"]

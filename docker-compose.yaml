@@ -1,0 +1,14 @@
+version: '3'
+
+networks:
+  in.net.ex:
+    driver: bridge
+
+services:
+  notes-service:
+    build: .
+    container_name: notes-service.in.net.ex
+    ports:
+      - 8080:8080
+    networks:
+      - in.net.ex
