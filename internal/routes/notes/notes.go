@@ -10,15 +10,38 @@ import (
 	"github.com/sirupsen/logrus"
 )
 
-// Объединяет в себе две функции получение по id и получение всех заметок
+// Receiving notes, sorting, retrieving by ID
 func FindAllNotesOrById(w http.ResponseWriter, r *http.Request) {
 	email, _, _ := r.BasicAuth()
 
 	idStr := r.URL.Query().Get("id")
+	querySort := r.URL.Query().Get("sort")
 
-	if idStr == "" {
-		if data := models.FindAll(email); data == nil {
-			json.NewEncoder(w).Encode(routes.RespStatus(w, 1.0, http.StatusOK, "You don't have notes!"))
+	if querySort != "" {
+		if querySort == "ASC" || querySort == "DESC" {
+			if data := models.FindAllSort(email, querySort); data == nil {
+				json.NewEncoder(w).Encode(routes.RespStatus(w, 1.0, http.StatusOK, "The note with the specified id was not found"))
+			} else {
+				json.NewEncoder(w).Encode(routes.RespStatus(w, 1.0, http.StatusOK, &data))
+				return
+
+			}
+
+		}
+		json.NewEncoder(w).Encode(routes.RespStatus(w, 1.0, http.StatusBadRequest, "Incorrect parameters for sorting"))
+		return
+	}
+
+	if idStr != "" {
+		id, err := strconv.Atoi(idStr)
+		if err != nil && id > 0 {
+			logrus.Warnf("The user sends an invalid value - %s", idStr)
+			json.NewEncoder(w).Encode(routes.RespStatus(w, 1.0, http.StatusBadRequest, "You sent the wrong parameter"))
+			return
+		}
+
+		if data := models.FindById(email, id); data == nil {
+			json.NewEncoder(w).Encode(routes.RespStatus(w, 1.0, http.StatusOK, "The note with the specified id was not found"))
 			return
 		} else {
 			json.NewEncoder(w).Encode(routes.RespStatus(w, 1.0, http.StatusOK, &data))
@@ -26,15 +49,8 @@ func FindAllNotesOrById(w http.ResponseWriter, r *http.Request) {
 		}
 	}
 
-	id, err := strconv.Atoi(idStr)
-	if err != nil && id > 0 {
-		logrus.Warnf("The user sends an invalid value - %s", idStr)
-		json.NewEncoder(w).Encode(routes.RespStatus(w, 1.0, http.StatusBadRequest, "You sent the wrong parameter"))
-		return
-	}
-
-	if data := models.FindById(email, id); data == nil {
-		json.NewEncoder(w).Encode(routes.RespStatus(w, 1.0, http.StatusOK, "The note with the specified id was not found"))
+	if data := models.FindAll(email); data == nil {
+		json.NewEncoder(w).Encode(routes.RespStatus(w, 1.0, http.StatusOK, "You don't have notes!"))
 		return
 	} else {
 		json.NewEncoder(w).Encode(routes.RespStatus(w, 1.0, http.StatusOK, &data))
@@ -42,6 +58,7 @@ func FindAllNotesOrById(w http.ResponseWriter, r *http.Request) {
 	}
 }
 
+// To create notes
 func CreateNote(w http.ResponseWriter, r *http.Request) {
 	var note models.NotesData
 	email, _, _ := r.BasicAuth()
@@ -51,12 +68,14 @@ func CreateNote(w http.ResponseWriter, r *http.Request) {
 	// Check nil in name notes
 	if note.Name == "" {
 		json.NewEncoder(w).Encode(routes.RespStatus(w, 1.0, http.StatusBadRequest, "Check the data entered correctly, fields should not be empty when creating the note!"))
+		return
 	}
 
 	models.CreateNote(email, note.Name, note.Value)
 	json.NewEncoder(w).Encode(routes.RespStatus(w, 1.0, http.StatusOK, "Success create!"))
 }
 
+// To update notes by ID
 func UploadNote(w http.ResponseWriter, r *http.Request) {
 	var note models.NotesData
 	email, _, _ := r.BasicAuth()
@@ -82,7 +101,8 @@ func UploadNote(w http.ResponseWriter, r *http.Request) {
 
 }
 
-func DeliteNote(w http.ResponseWriter, r *http.Request) {
+// To delete notes by ID
+func DeleteNote(w http.ResponseWriter, r *http.Request) {
 	email, _, _ := r.BasicAuth()
 
 	idStr := r.URL.Query().Get("id")

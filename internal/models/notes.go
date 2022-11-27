@@ -27,6 +27,23 @@ func numbering(data []NotesData) int {
 	return num.Id + 1
 }
 
+func sortById(data []NotesData, sortQuery string) []NotesData {
+	for i := 0; i < len(data)-1; i++ {
+		for j := i; j < len(data); j++ {
+			if sortQuery == "ASC" {
+				if data[i].Id > data[j].Id {
+					data[i], data[j] = data[j], data[i]
+				}
+			} else {
+				if data[i].Id < data[j].Id {
+					data[i], data[j] = data[j], data[i]
+				}
+			}
+		}
+	}
+	return data
+}
+
 /*
 	Getting all notes from a particular user (The list of notes is determined by email)
 	Email is not visible to the user when all notes are received
@@ -53,6 +70,13 @@ func FindAll(email string) []NotesData {
 	}
 
 	return data
+}
+
+// Find all and sorting data
+func FindAllSort(email string, querySort string) []NotesData {
+	data := FindAll(email)
+
+	return sortById(data, querySort)
 }
 
 // Find by id WORK: TESTED

@@ -28,7 +28,7 @@ func IsUserData(email string, pass string) bool {
 
 // Creating a user
 func CreateUser(email string, pass string) (bool, error) {
-	for key, _ := range userData {
+	for key := range userData {
 		if key == email {
 			return false, nil
 		}

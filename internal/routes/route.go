@@ -6,12 +6,12 @@ import (
 )
 
 type resp struct {
-	Api         float32     `json:"api_version"`
+	Api         float64     `json:"api_version"`
 	Status      int         `json:"status"`
 	Description interface{} `json:"description"`
 }
 
-func RespStatus(w http.ResponseWriter, api float32, status int, description interface{}) []resp {
+func RespStatus(w http.ResponseWriter, api float64, status int, description interface{}) []resp {
 	w.Header().Set("Content-Type", "application/json")
 	w.WriteHeader(status)
 
