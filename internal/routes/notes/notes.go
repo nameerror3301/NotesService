@@ -24,7 +24,6 @@ func FindAllNotesOrById(w http.ResponseWriter, r *http.Request) {
 			} else {
 				json.NewEncoder(w).Encode(routes.RespStatus(w, 1.0, http.StatusOK, &data))
 				return
-
 			}
 
 		}
