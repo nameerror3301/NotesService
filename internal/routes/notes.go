@@ -1,8 +1,7 @@
-package notes
+package routes
 
 import (
 	"NotesService/internal/models"
-	"NotesService/internal/routes"
 	"encoding/json"
 	"net/http"
 	"strconv"
@@ -20,14 +19,14 @@ func FindAllNotesOrById(w http.ResponseWriter, r *http.Request) {
 	if querySort != "" {
 		if querySort == "ASC" || querySort == "DESC" {
 			if data := models.FindAllSort(email, querySort); data == nil {
-				json.NewEncoder(w).Encode(routes.RespStatus(w, 1.0, http.StatusOK, "The note with the specified id was not found"))
+				json.NewEncoder(w).Encode(RespStatus(w, 1.0, http.StatusOK, "The note with the specified id was not found"))
 			} else {
-				json.NewEncoder(w).Encode(routes.RespStatus(w, 1.0, http.StatusOK, &data))
+				json.NewEncoder(w).Encode(RespStatus(w, 1.0, http.StatusOK, &data))
 				return
 			}
 
 		}
-		json.NewEncoder(w).Encode(routes.RespStatus(w, 1.0, http.StatusBadRequest, "Incorrect parameters for sorting"))
+		json.NewEncoder(w).Encode(RespStatus(w, 1.0, http.StatusBadRequest, "Incorrect parameters for sorting"))
 		return
 	}
 
@@ -35,24 +34,24 @@ func FindAllNotesOrById(w http.ResponseWriter, r *http.Request) {
 		id, err := strconv.Atoi(idStr)
 		if err != nil && id > 0 {
 			logrus.Warnf("The user sends an invalid value - %s", idStr)
-			json.NewEncoder(w).Encode(routes.RespStatus(w, 1.0, http.StatusBadRequest, "You sent the wrong parameter"))
+			json.NewEncoder(w).Encode(RespStatus(w, 1.0, http.StatusBadRequest, "You sent the wrong parameter"))
 			return
 		}
 
 		if data := models.FindById(email, id); data == nil {
-			json.NewEncoder(w).Encode(routes.RespStatus(w, 1.0, http.StatusOK, "The note with the specified id was not found"))
+			json.NewEncoder(w).Encode(RespStatus(w, 1.0, http.StatusOK, "The note with the specified id was not found"))
 			return
 		} else {
-			json.NewEncoder(w).Encode(routes.RespStatus(w, 1.0, http.StatusOK, &data))
+			json.NewEncoder(w).Encode(RespStatus(w, 1.0, http.StatusOK, &data))
 			return
 		}
 	}
 
 	if data := models.FindAll(email); data == nil {
-		json.NewEncoder(w).Encode(routes.RespStatus(w, 1.0, http.StatusOK, "You don't have notes!"))
+		json.NewEncoder(w).Encode(RespStatus(w, 1.0, http.StatusOK, "You don't have notes!"))
 		return
 	} else {
-		json.NewEncoder(w).Encode(routes.RespStatus(w, 1.0, http.StatusOK, &data))
+		json.NewEncoder(w).Encode(RespStatus(w, 1.0, http.StatusOK, &data))
 		return
 	}
 }
@@ -66,12 +65,12 @@ func CreateNote(w http.ResponseWriter, r *http.Request) {
 
 	// Check nil in name notes
 	if note.Name == "" {
-		json.NewEncoder(w).Encode(routes.RespStatus(w, 1.0, http.StatusBadRequest, "Check the data entered correctly, fields should not be empty when creating the note!"))
+		json.NewEncoder(w).Encode(RespStatus(w, 1.0, http.StatusBadRequest, "Check the data entered correctly, fields should not be empty when creating the note!"))
 		return
 	}
 
 	models.CreateNote(email, note.Name, note.Value)
-	json.NewEncoder(w).Encode(routes.RespStatus(w, 1.0, http.StatusOK, "Success create!"))
+	json.NewEncoder(w).Encode(RespStatus(w, 1.0, http.StatusOK, "Success create!"))
 }
 
 // To update notes by ID
@@ -82,7 +81,7 @@ func UploadNote(w http.ResponseWriter, r *http.Request) {
 
 	// Check nil in fields
 	if note.Name == "" || note.Value == "" {
-		json.NewEncoder(w).Encode(routes.RespStatus(w, 1.0, http.StatusBadRequest, "Invalid value in the fields, check fields!"))
+		json.NewEncoder(w).Encode(RespStatus(w, 1.0, http.StatusBadRequest, "Invalid value in the fields, check fields!"))
 		return
 	}
 
@@ -91,10 +90,10 @@ func UploadNote(w http.ResponseWriter, r *http.Request) {
 			or no notes with the specified id are found
 	*/
 	if status := models.UploadNote(email, note.Id, note.Name, note.Value); status {
-		json.NewEncoder(w).Encode(routes.RespStatus(w, 1.0, http.StatusOK, "Upload success!"))
+		json.NewEncoder(w).Encode(RespStatus(w, 1.0, http.StatusOK, "Upload success!"))
 		return
 	} else {
-		json.NewEncoder(w).Encode(routes.RespStatus(w, 1.0, http.StatusOK, "No notes with this id were found!"))
+		json.NewEncoder(w).Encode(RespStatus(w, 1.0, http.StatusOK, "No notes with this id were found!"))
 		return
 	}
 
@@ -108,12 +107,12 @@ func DeleteNote(w http.ResponseWriter, r *http.Request) {
 	id, err := strconv.Atoi(idStr)
 	if err != nil && id > 0 {
 		logrus.Warnf("The user sends an invalid value - %s", idStr)
-		json.NewEncoder(w).Encode(routes.RespStatus(w, 1.0, http.StatusBadRequest, "You sent the wrong parameter"))
+		json.NewEncoder(w).Encode(RespStatus(w, 1.0, http.StatusBadRequest, "You sent the wrong parameter"))
 		return
 	}
 
 	if status := models.DeliteNote(email, id); status {
-		json.NewEncoder(w).Encode(routes.RespStatus(w, 1.0, http.StatusOK, "Delete success!"))
+		json.NewEncoder(w).Encode(RespStatus(w, 1.0, http.StatusOK, "Delete success!"))
 		return
 	}
 }
