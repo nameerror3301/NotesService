@@ -7,6 +7,7 @@ import (
 )
 
 func init() {
+	// Минимальная конфигурация формата логов
 	logrus.SetFormatter(&logrus.TextFormatter{
 		DisableColors: false,
 		FullTimestamp: false,

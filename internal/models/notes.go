@@ -15,6 +15,7 @@ type NotesData struct {
 	Date time.Time `json:"last_update"`
 }
 
+// Общая структура для хранения заметок
 var notes []NotesData
 
 func numbering(data []NotesData) int {
@@ -27,6 +28,7 @@ func numbering(data []NotesData) int {
 	return num.Id + 1
 }
 
+// Сортировка по ID всех заметок (Пузырьковая)
 func sortById(data []NotesData, sortQuery string) []NotesData {
 	for i := 0; i < len(data)-1; i++ {
 		for j := i; j < len(data); j++ {
@@ -44,11 +46,7 @@ func sortById(data []NotesData, sortQuery string) []NotesData {
 	return data
 }
 
-/*
-	Getting all notes from a particular user (The list of notes is determined by email)
-	Email is not visible to the user when all notes are received
-*/
-// Find all WORK: TESTED
+// Получение всех заметок (Не сортированных)
 func FindAll(email string) []NotesData {
 	var data []NotesData
 
@@ -64,22 +62,17 @@ func FindAll(email string) []NotesData {
 		}
 	}
 
-	// Checking for user notes
-	if data == nil {
-		return nil
-	}
-
 	return data
 }
 
-// Find all and sorting data
+// Получение всех заметок (Отсортированных)
 func FindAllSort(email string, querySort string) []NotesData {
 	data := FindAll(email)
 
 	return sortById(data, querySort)
 }
 
-// Find by id WORK: TESTED
+// Получение по ID
 func FindById(email string, id int) []NotesData {
 	var data []NotesData
 	for _, val := range notes {
@@ -99,7 +92,7 @@ func FindById(email string, id int) []NotesData {
 	return nil
 }
 
-// Creating a note WORK: TESTED
+// Создание заметок
 func CreateNote(email string, name string, value string) {
 	notes = append(notes, NotesData{
 		Email: email,
@@ -111,7 +104,7 @@ func CreateNote(email string, name string, value string) {
 	logrus.Infof("%s --> Create Notes", email)
 }
 
-// Upload notes WORK: TESTED
+// Обновление или дополнение заметок
 func UploadNote(email string, id int, newname string, newvalue string) bool {
 	for idx, val := range notes {
 		if val.Email == email {
@@ -125,7 +118,7 @@ func UploadNote(email string, id int, newname string, newvalue string) bool {
 	return false
 }
 
-// Delete notes WORK: TESTED
+// Удаление заметок по их ID
 func DeliteNote(email string, id int) bool {
 	status := false
 

@@ -9,22 +9,17 @@ import (
 	"github.com/sirupsen/logrus"
 )
 
-// STATUS: WORK (Tested)
+// Логирование запросов от пользователя
 func UserRequestLog(next http.HandlerFunc) http.HandlerFunc {
-	/*
-		Middleware from logging user request
-	*/
+
 	return func(w http.ResponseWriter, r *http.Request) {
 		logrus.Infof("Path - [%s] - Method - [%s]", r.URL.Path, r.Method)
 		next(w, r)
 	}
 }
 
-// STATUS: WORK (Tested)
+// Проверка метода запроса
 func UserMethodCheck(next http.HandlerFunc, method ...string) http.HandlerFunc {
-	/*
-		Middleware from check user method
-	*/
 
 	return func(w http.ResponseWriter, r *http.Request) {
 		if !isMethod(r, method...) {
@@ -37,7 +32,7 @@ func UserMethodCheck(next http.HandlerFunc, method ...string) http.HandlerFunc {
 	}
 }
 
-// STATUS: WORK (Tested)
+// Вспомогательная функция для проверки метода запроса
 func isMethod(r *http.Request, method ...string) bool {
 	var status []bool
 	for _, val := range method {
@@ -57,11 +52,8 @@ func isMethod(r *http.Request, method ...string) bool {
 	return false
 }
 
-// STATUS: WORK (Tested)
+// Проверка контента который отправляет пользователь
 func UserCheckContent(next http.HandlerFunc) http.HandlerFunc {
-	/*
-		Middleware from check user content-type
-	*/
 
 	return func(w http.ResponseWriter, r *http.Request) {
 		if r.Header.Get("Content-Type") != "application/json" {
@@ -75,11 +67,8 @@ func UserCheckContent(next http.HandlerFunc) http.HandlerFunc {
 	}
 }
 
-// STATUS: WORK (Tested)
+// Базовая аутентификация пользователя средствами BasicAuth
 func UserBasicAuth(next http.HandlerFunc) http.HandlerFunc {
-	/*
-		Middleware from auth user
-	*/
 
 	return func(w http.ResponseWriter, r *http.Request) {
 		email, pass, ok := r.BasicAuth()

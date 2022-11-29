@@ -26,13 +26,10 @@
 ## Структура проекта
 
 ```
+.
 ├── app
 │   └── cmd
 │       └── main.go
-├── docker-compose.yaml
-├── Dockerfile
-├── go.mod
-├── go.sum
 ├── internal
 │   ├── app
 │   │   └── run
@@ -43,11 +40,13 @@
 │   │   ├── notes.go
 │   │   └── users.go
 │   └── routes
-│       ├── auth
-│       │   └── auth.go
-│       ├── notes
-│       │   └── notes.go
+│       ├── auth.go
+│       ├── notes.go
 │       └── route.go
+├── docker-compose.yaml
+├── Dockerfile
+├── go.mod
+├── go.sum
 ├── Readme.md
 ├── TermsOfReference.md
 └── tools

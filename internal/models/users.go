@@ -11,9 +11,10 @@ type UserData struct {
 	Pass  string `json:"password"`
 }
 
+// Хранилеще пользователей
 var userData = map[string][]byte{}
 
-// Checking for a user in the database
+// Проверка аутентификации
 func IsUserData(email string, pass string) bool {
 	hashPass, isOk := userData[email]
 	if !isOk {
@@ -26,7 +27,7 @@ func IsUserData(email string, pass string) bool {
 	return true
 }
 
-// Creating a user
+// Создание пользователя
 func CreateUser(email string, pass string) (bool, error) {
 	for key := range userData {
 		if key == email {
