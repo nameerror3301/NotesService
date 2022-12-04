@@ -16,7 +16,6 @@ func init() {
 
 func main() {
 	logrus.Info("Server up successful!")
-
 	if err := run.Run(); err != nil {
 		logrus.Fatalf("Err server up - %s", err)
 	}

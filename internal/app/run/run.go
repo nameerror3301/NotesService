@@ -28,5 +28,6 @@ func Run() error {
 	if err := serv.ListenAndServe(); err != nil {
 		return err
 	}
+
 	return nil
 }

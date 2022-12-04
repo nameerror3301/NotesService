@@ -69,8 +69,13 @@ func CreateNote(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	models.CreateNote(email, note.Name, note.Value)
-	json.NewEncoder(w).Encode(RespStatus(w, 1.0, http.StatusOK, "Success create!"))
+	if status := models.CreateNote(email, note.Name, note.Value, note.TTL); status {
+		json.NewEncoder(w).Encode(RespStatus(w, 1.0, http.StatusOK, "Success create!"))
+		return
+	} else {
+		json.NewEncoder(w).Encode(RespStatus(w, 1.0, http.StatusBadRequest, "You entered the wrong date for the TTL. Format 2006/01/02  15:04:05."))
+		return
+	}
 }
 
 // Обновление заметки
@@ -92,7 +97,6 @@ func UploadNote(w http.ResponseWriter, r *http.Request) {
 		json.NewEncoder(w).Encode(RespStatus(w, 1.0, http.StatusOK, "No notes with this id were found!"))
 		return
 	}
-
 }
 
 // Удаление заметки
