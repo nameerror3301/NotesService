@@ -86,7 +86,8 @@
 ```
     {
         "notes_name": "Note #1", 
-        "notes_content": "Hello world!"
+        "notes_content": "Hello world!",
+        "ttl_date_to_delete":"2022/12/04 12:27:44" 
     }
 ```
 

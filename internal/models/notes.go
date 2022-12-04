@@ -75,8 +75,6 @@ func FindAllSort(email string, querySort string) []NotesData {
 
 // Получение по ID
 func FindById(email string, id int) []NotesData {
-
-	// INFO: Реализовать бинарный поиск по слайсу структур
 	var data []NotesData
 	for _, val := range notes {
 		if val.Email == email {
